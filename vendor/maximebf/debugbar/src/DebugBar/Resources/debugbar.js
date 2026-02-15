@@ -284,7 +284,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
             this.bindAttr('data', function(data) {
                 if (this.has('widget')) {
                     this.get('widget').set('data', data);
-                    this.$tab.attr('data-empty', $.isEmptyObject(data));
+                    this.$tab.attr('data-empty', $.isEmptyObject(data) || data.count === 0);
                 }
             })
         }
@@ -648,6 +648,8 @@ if (typeof(PhpDebugBar) == 'undefined') {
          * Resizes the debugbar to fit the current browser window
          */
         resize: function() {
+            if (this.isIframe) return;
+
             var contentSize = this.respCSSSize;
             if (this.respCSSSize == 0) {
                 this.$header.find("> *:visible").each(function () {
@@ -756,7 +758,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
             this.settings.$tab.addClass(csscls('tab-settings'));
             this.settings.$tab.attr('data-collector', '__settings');
             this.settings.$el.attr('data-collector', '__settings');
-            this.settings.$tab.insertAfter(this.$minimizebtn).show();
+            this.settings.$tab.insertAfter(this.$maximizebtn).show();
             this.settings.$tab.click(() => {
                 if (!this.isMinimized() && this.activePanelName == '__settings') {
                     this.minimize();
@@ -778,7 +780,7 @@ if (typeof(PhpDebugBar) == 'undefined') {
          */
         setHeight: function(height) {
             var min_h = 40;
-            var max_h = $(window).innerHeight() - this.$header.height() - 10;
+            var max_h = window.innerHeight - this.$header.height() - 10;
             height = Math.min(height, max_h);
             height = Math.max(height, min_h);
             this.$body.css('height', height);
